@@ -21,7 +21,7 @@ Many analog sensor have transfers functions described in their datasheets for es
 
 To simplify the approach, the FPGAs sole purpose is to read the analog signal and convert it to a 12-bit dgital value. This digital value can be passed to a python script that converts the value to a relavent meauserment (ppm) and records that value in a csv file. The information from the csv file can then be used for visualization and monitoring. 
 
-
-
+## The MQ3 Directory
+This contains the design source file (.vhd), the constraint file (.xdc), an the XADC IP core (.xci) file used for the MQ3 sensor (alcohol gas sensor). However, those same files were successfully used for reading from the MQ135 sensor (gas sensor), and the IR distance sensor. The added python scripts perform the task of decoding the 12-bit data into the respective measurement via the transfer function for their respective datasheets.   
 
 
