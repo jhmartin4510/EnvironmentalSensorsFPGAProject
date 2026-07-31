@@ -52,15 +52,35 @@ def convert_mq135(data, v_in = 5.0, rl = 10000.0, v_clean_air=0.100):
 
     return sensor_scaled, log_data, header, display
 
+def convert_ir_distance(data, v_ref=1.0):
+    """This convertsreadings from a Sharp GP2Y0A21YK0F IR Distance Sensor.
+    Please be advised regarding these conditions:
+    1. Valid detection range is between 10 cm and 80 cm.
+    2. Objects closer than 10 cm fall into a blind spot and will produce misleading readings.
+    """
+    # scaling 
+    fpga_out = (data / 4095.0) * v_ref
+    sensor_scaled = fpga_out * 5.0
 
+    # safe bounds
+    sensor_voltage_clamped = max(0.4, min(sensor_scaled, 2.8))
 
+    # formula from data sheet
+    distance_cm = 27.86 * math.pow(sensor_voltage_clamped, -1.15)
 
+    # headers, data, display
+    header = ["Timestamp", "Sensor_Voltage_V", "Distance_cm"]
+    log_data = [f"{sensor_scaled:.3f}", f"{distance_cm:.1f}"]
+    display = f"Voltage: {sensor_scaled:.3f} V | Distance: {distance_cm:.1f} cm"
+
+    return sensor_scaled, log_data, header, display
 
 
 
 SENSOR_MAP = {
     'mq3' : convert_mq3,
-    'mq135' : convert_mq135
+    'mq135' : convert_mq135,
+    'ir_distance' : convert_ir_distance
     }
 
 def process_adc_data(sensor_name, data):
